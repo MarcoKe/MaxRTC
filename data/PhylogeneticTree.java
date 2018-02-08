@@ -1,42 +1,67 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import rtc.MarcoTree;
+import rtc.RecursiveTreeBuilder;
 
 public class PhylogeneticTree {
-	private int numVertices; 
-	private List<Integer> adjListArray[]; 
-	private int ancestors[];
+	private Map<Integer, List<Integer>> adjListArray; 
+	private Map<Integer, Integer> ancestors;
+	private int root; 
 	
 	
 	
-	public PhylogeneticTree(int numVertices) {
-		this.numVertices = numVertices; 
-		adjListArray = new ArrayList[numVertices];
-		ancestors = new int[numVertices]; 
+	public PhylogeneticTree(Set<Integer> labels, int root) {
+		adjListArray = new HashMap<>();
+		ancestors = new HashMap<>(); 
 		
 		
-		for (int i = 0; i < numVertices; i++) {
-			adjListArray[i] = new ArrayList<>(); 
+		for (int label : labels) {
+			adjListArray.put(label, new ArrayList<>()); 
 		}
+		
+		adjListArray.put(root, new ArrayList<>());
+		
+		this.root = root; 
 		
 	}
 	
+	public PhylogeneticTree(Set<Integer> labels) {
+		this(labels, 0); 
+	}
+	
+	public PhylogeneticTree(PhylogeneticTree tree) {
+		this.adjListArray = new HashMap<Integer, List<Integer>>(tree.getAdjList());
+		this.ancestors = new HashMap<Integer, Integer>(tree.getAncestors());
+		this.root = tree.getRoot(); 
+	}
+	
 	public void addEdge(int src, int dest) {
-		adjListArray[src].add(dest);
-		ancestors[dest] = src; 
+		if (adjListArray.get(src) == null) {
+			adjListArray.put(src, new ArrayList<>());
+		}
+		
+		if (adjListArray.get(dest) == null) {
+			adjListArray.put(dest, new ArrayList<>());
+		}
+		
+		adjListArray.get(src).add(dest);
+		ancestors.put(dest, src); 
 	}
 	
 	public List<Integer> getAncestors(int a) {
 		ArrayList<Integer> allAncestors = new ArrayList<>(); 
 		
 		int current = a; 
-		while (current != 0) { 
-			int nextAncestor = ancestors[current]; 
+		while (current != root) { 
+			if (ancestors.get(current) == null) break;
+			int nextAncestor = ancestors.get(current); 
 			allAncestors.add(nextAncestor);
 			current = nextAncestor; 			
 		}
@@ -56,7 +81,7 @@ public class PhylogeneticTree {
 				}
 			}
 		}
-		return 0; 
+		return root; 
 	}
 	
 	public boolean isConsistent(RootedTriplet triplet) {	
@@ -77,22 +102,22 @@ public class PhylogeneticTree {
 		return false; 
 	}
 	
-	public List<Integer>[] getAdjList() {
+	public Map<Integer, List<Integer>> getAdjList() {
 		return adjListArray; 
 	}
 	
 	public boolean isLeaf(int a) { 
-		return adjListArray[a].size() == 0; 
+		return adjListArray.get(a).size() == 0; 
 	}
 	
 	public List<RootedTriplet> findAllTriplets() {
 		List<RootedTriplet> triplets = new ArrayList<>(); 
 		
-		for(int i = 1; i < numVertices-1; i++) {
-			if (ancestors[i] == 0) continue; 
-			for (int j = i+1; j < numVertices; j++) {
-				if (ancestors[j] == 0) continue; 
-				for (int k = 0; k < numVertices; k++) { 
+		for(int i : adjListArray.keySet()) {
+			if (ancestors.get(i) == null || ancestors.get(i) == root) continue; 
+			for (int j : adjListArray.keySet()) {
+				if (ancestors.get(j) == null || ancestors.get(j) == root) continue; 
+				for (int k : adjListArray.keySet()) { 
 					RootedTriplet t = new RootedTriplet(i, j, k); 
 					if (isConsistent(t)) {
 						triplets.add(t); 
@@ -104,22 +129,56 @@ public class PhylogeneticTree {
 		return triplets; 
 	}
 	
-	public Set<Integer> getLabels() {
-		Set<Integer> labels = new HashSet<>(); 
-		for (int i = 0; i < numVertices; i++) {
-			labels.add(i);
-		}
-		
-		return labels; 
+	public Set<Integer> getLabels() {		
+		return adjListArray.keySet(); 
 	}
 	
+	public Map<Integer, Integer> getAncestors() {
+		return ancestors; 
+	}
+	
+	public PhylogeneticTree merge(PhylogeneticTree tree, int src) {
+		PhylogeneticTree newTree = new PhylogeneticTree(this); 
+		
+		System.out.println("Merging trees " + tree.toString() + "\n and " + this.toString() +"\n to node " + src);
+		
+		for (int key : tree.getAdjList().keySet()) {
+			for (int con : tree.getAdjList().get(key)) {
+				if (key != tree.getRoot())
+					newTree.addEdge(key, con);
+				else 
+					newTree.addEdge(src, con);
+			}
+		}
+		
+		newTree.addEdge(this.root, src);
+		
+		System.out.println("merge complete: " + newTree.toString() + " root: " + this.getRoot());
+	
+		return newTree; 	
+	}
+	
+	public String toString() {
+		String s = ""; 
+		for (int key : this.getAdjList().keySet()) {
+			s += key + ": " + this.getAdjList().get(key) + ", ";
+		}
+		
+		return s;
+	}
+	
+	public int getRoot() {
+		return root; 
+	}
 	
 	
 	
 	
 		
 	public static void main(String[] args) {
-		PhylogeneticTree t = new PhylogeneticTree(9);
+		Set<Integer> labels = new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8));
+		
+		PhylogeneticTree t = new PhylogeneticTree(labels);
 		t.addEdge(0, 1);
 		t.addEdge(0, 2);
 		t.addEdge(1, 3);
@@ -129,10 +188,10 @@ public class PhylogeneticTree {
 		t.addEdge(3, 7);
 		t.addEdge(3, 8);
 		
-		List<Integer>[] adjlist = t.getAdjList(); 
+		Map<Integer, List<Integer>> adjlist = t.getAdjList(); 
 		
-		for (int i = 0; i < adjlist.length; i++) {
-			System.out.println(i + ": " + adjlist[i]);
+		for (int key : adjlist.keySet()) {
+			System.out.println(key + ": " + adjlist.get(key));
 		}
 		
 		System.out.println("lca " + t.lca(7, 8));
@@ -150,8 +209,9 @@ public class PhylogeneticTree {
 		
 		
 		
-		
-		PhylogeneticTree t2 = new PhylogeneticTree(16); 
+		Set<Integer> labels2 = new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+
+		PhylogeneticTree t2 = new PhylogeneticTree(labels2); 
 		t2.addEdge(0, 1);
 		t2.addEdge(0, 2);
 		t2.addEdge(0, 9);
@@ -173,10 +233,22 @@ public class PhylogeneticTree {
 		System.out.println(t2.findAllTriplets().toString());
 		
 		
-		MarcoTree m = new MarcoTree(); 
+		RecursiveTreeBuilder m = new RecursiveTreeBuilder(); 
 		m.rec(t2.findAllTriplets(), t2.getLabels(), 0);
 		
+		PhylogeneticTree t3 = new PhylogeneticTree(new HashSet<>(Arrays.asList(0, 14, 15)));
+		t3.addEdge(0, 14);
+		t3.addEdge(0, 15);
 		
+		PhylogeneticTree t4 = t.merge(t3, 8);
+		
+		for (int key : t4.getAdjList().keySet()) {
+			System.out.println(key + ": " + t4.getAdjList().get(key));
+		}
+		
+//		PhylogeneticTree = 
 	}
+	
+	
 
 }
