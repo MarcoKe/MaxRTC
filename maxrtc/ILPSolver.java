@@ -1,44 +1,68 @@
 package maxrtc;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cplexutil.LPWriter;
+import cplexutil.RunCplexPrintOutput;
 import data.PhylogeneticTree;
 import data.RootedTriplet;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
 
 public class ILPSolver {
-	boolean tripletIndicator[][][]; 
-	int numTaxa; 
+	List<RootedTriplet> inputTriplets; 
+	List<Integer> labels; 
+	
 
-	public ILPSolver(List<RootedTriplet> triplets, int numTaxa) {
-		this.tripletIndicator = new boolean[numTaxa][numTaxa][numTaxa]; 
-		this.numTaxa = numTaxa; 
+	public ILPSolver(List<RootedTriplet> triplets) {
+		this.inputTriplets = triplets; 
+		Set<Integer> labels = getLabelSet(triplets); 
+		this.labels = new ArrayList<>(labels); 
 
+		
+
+	}
+	
+	public Set<Integer> getLabelSet(List<RootedTriplet> triplets) {
+		Set<Integer> labels = new HashSet<>(); 
+		
 		for (RootedTriplet t : triplets) {
-			this.tripletIndicator[t.a][t.b][t.c] = true; 
+			labels.add(t.a);
+			labels.add(t.b);
+			labels.add(t.c);
 		}
-
+		
+		return labels; 
 	}
 
 	
-	public void solve() {
+	public List<RootedTriplet> solve() {
 		writeILP(); 
 		IloCplex cplex;
+		
 		try {
 			cplex = new IloCplex();
 			cplex.importModel("ilp.lp");
+			double startTime = cplex.getCplexTime(); 
 			cplex.solve(); 
+			double finishTime = cplex.getCplexTime(); 
+			double duration = finishTime - startTime; 
 			cplex.writeSolution("test.sol");
+			RunCplexPrintOutput reader = new RunCplexPrintOutput(); 
+			System.out.println("DURATION YO: " + duration);
+			return reader.getTriplets();
 
 		} catch (IloException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	// builds ilp and writes to file 
@@ -47,17 +71,21 @@ public class ILPSolver {
 
 		String obj = "";
 		String binaries = ""; 
-		for (int i = 0; i < numTaxa; i++) {
-			for (int j = 0; j < numTaxa; j++) {
-				for (int k = 0; k < numTaxa; k++) {
+		
+		for (int i : labels) {
+			for (int j : labels) {
+				for (int k : labels) {
 
-					if (tripletIndicator[i][j][k]) {
-						obj += "t"+i+j+k + " + ";
+					
+					if (i != j && i != k && j != k)
 						binaries += "t"+i+j+k + " ";
-					}
 
 				}
 			}
+		}
+		
+		for (RootedTriplet t : inputTriplets) { 
+			obj += "t"+t.a+t.b+t.c + " + "; 
 		}
 
 		obj = obj.substring(0, obj.length()-3);
@@ -65,9 +93,9 @@ public class ILPSolver {
 		lpwriter.addIntegerVars(true, binaries);  
 
 		// constraints 
-		for (int i = 0; i < numTaxa; i++) {
-			for (int j = 0; j < numTaxa; j++) {
-				for (int k = 0; k < numTaxa; k++) {
+		for (int i : labels) {
+			for (int j : labels) {
+				for (int k : labels) {
 					if (!(i == j || i == k 
 							|| j == k)) {
 						lpwriter.addConstraint("t"+i+j+k + " + t" + i+k+j + " + t" + j+k+i + " = 1" );
@@ -76,10 +104,10 @@ public class ILPSolver {
 			}
 		}
 
-		for (int i = 0; i < numTaxa; i++) {
-			for (int j = 0; j < numTaxa; j++) {
-				for (int k = 0; k < numTaxa; k++) {
-					for (int l = 0; l < numTaxa; l++) {
+		for (int i : labels) {
+			for (int j : labels) {
+				for (int k : labels) {
+					for (int l : labels) {
 						if (!(i == j || i == k || i == l
 								|| j == k || j == l
 								|| l == k)) {
@@ -113,7 +141,7 @@ public class ILPSolver {
 		t.addEdge(3, 7);
 		t.addEdge(3, 8);
 
-		ILPSolver solver = new ILPSolver(t.findAllTriplets(), 9);
+		ILPSolver solver = new ILPSolver(t.findAllTriplets());
 		solver.solve();
 	}
 

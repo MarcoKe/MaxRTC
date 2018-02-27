@@ -113,14 +113,39 @@ public class PhylogeneticTree {
 	public List<RootedTriplet> findAllTriplets() {
 		List<RootedTriplet> triplets = new ArrayList<>(); 
 		
-		for(int i : adjListArray.keySet()) {
-			if (ancestors.get(i) == null || ancestors.get(i) == root) continue; 
-			for (int j : adjListArray.keySet()) {
-				if (ancestors.get(j) == null || ancestors.get(j) == root) continue; 
-				for (int k : adjListArray.keySet()) { 
-					RootedTriplet t = new RootedTriplet(i, j, k); 
-					if (isConsistent(t)) {
-						triplets.add(t); 
+//		for(int i : adjListArray.keySet()) {
+//			if (ancestors.get(i) == null || ancestors.get(i) == root) continue; 
+//			for (int j : adjListArray.keySet()) {
+//				if (ancestors.get(j) == null || ancestors.get(j) == root) continue; 
+//				for (int k : adjListArray.keySet()) { 
+//					if (isLeaf(i) && isLeaf(j) && isLeaf(k) && i != j && i != k && j != k) {
+//						RootedTriplet t = new RootedTriplet(i, j, k); 
+//						if (isConsistent(t)) {
+//							triplets.add(t); 
+//						}
+//					}
+//				}
+//			}
+//		}
+		
+		Set<Integer> leaveSet = new HashSet<>(); 
+		for (int i : adjListArray.keySet()) {
+			if (isLeaf(i)) {
+				leaveSet.add(i); 
+			}
+		}
+		
+		System.out.println(leaveSet);
+		
+		List<Integer> leaves = new ArrayList<>(leaveSet);
+		for (int i = 0; i < leaves.size()-1; i++) {
+			for (int j = i+1; j < leaves.size(); j++) {
+				for (int k = 0; k < leaves.size(); k++) {
+					if (i != k && j != k) {
+						RootedTriplet t = new RootedTriplet(leaves.get(i), leaves.get(j), leaves.get(k)); 
+						if (isConsistent(t)) {
+							triplets.add(t);
+						}
 					}
 				}
 			}
