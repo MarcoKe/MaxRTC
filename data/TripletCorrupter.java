@@ -12,7 +12,6 @@ public class TripletCorrupter {
 		
 		for (RootedTriplet t : triplets) {
 			if (random.nextFloat() < corruptionRate) {
-				System.out.println("corrupting this bitch");
 				RootedTriplet newTriplet; 
 				
 				if (random.nextFloat() <= 0.5) {
@@ -33,34 +32,11 @@ public class TripletCorrupter {
 	}
 	
 	public static void main(String[] args) {
-		List<RootedTriplet> triplets = new ArrayList<>(); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
-		triplets.add(new RootedTriplet(1, 2, 3)); 
-		triplets.add(new RootedTriplet(2, 3, 4)); 
+		RandomTreeGenerator gen = new RandomTreeGenerator(); 
+		List<RootedTriplet> triplets = gen.generateTree(10).findAllTriplets();
 		
 		TripletCorrupter c = new TripletCorrupter(); 
-		List<RootedTriplet> whatup = c.corrupt(triplets, 0.1); 
-		System.out.println(whatup);
+		List<RootedTriplet> corrupted = c.corrupt(triplets, 0.1); 
+		System.out.println(corrupted);
 	}
 }
