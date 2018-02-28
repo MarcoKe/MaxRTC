@@ -18,6 +18,7 @@ import ilog.cplex.IloCplex;
 public class ILPSolver {
 	List<RootedTriplet> inputTriplets; 
 	List<Integer> labels; 
+	double duration = 0.0;
 	
 
 	public ILPSolver(List<RootedTriplet> triplets) {
@@ -56,6 +57,7 @@ public class ILPSolver {
 			cplex.writeSolution("test.sol");
 			RunCplexPrintOutput reader = new RunCplexPrintOutput(); 
 			System.out.println("DURATION YO: " + duration);
+			this.duration = duration;
 			return reader.getTriplets();
 
 		} catch (IloException e) {
@@ -127,6 +129,10 @@ public class ILPSolver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public double getDuration() {
+		return duration; 
 	}
 
 

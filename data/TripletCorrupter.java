@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import maxrtc.ILPSolver;
+
 public class TripletCorrupter {
 
 	public List<RootedTriplet> corrupt(List<RootedTriplet> triplets, double corruptionRate) {
@@ -36,7 +38,10 @@ public class TripletCorrupter {
 		List<RootedTriplet> triplets = gen.generateTree(10).findAllTriplets();
 		
 		TripletCorrupter c = new TripletCorrupter(); 
-		List<RootedTriplet> corrupted = c.corrupt(triplets, 0.1); 
+		List<RootedTriplet> corrupted = c.corrupt(triplets, 0.5); 
+		ILPSolver solver = new ILPSolver(corrupted);
+		solver.solve();
+		
 		System.out.println(corrupted);
 	}
 }

@@ -36,6 +36,13 @@ public class PhylogeneticTree {
 		this(labels, 0); 
 	}
 	
+	public PhylogeneticTree() {
+		adjListArray = new HashMap<>(); 
+		ancestors = new HashMap<>(); 
+		
+		this.root = 0; 
+	}
+	
 	public PhylogeneticTree(PhylogeneticTree tree) {
 		this.adjListArray = new HashMap<Integer, List<Integer>>(tree.getAdjList());
 		this.ancestors = new HashMap<Integer, Integer>(tree.getAncestors());
