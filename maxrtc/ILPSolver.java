@@ -1,6 +1,5 @@
 package maxrtc;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import cplexutil.LPWriter;
-import cplexutil.RunCplexPrintOutput;
 import data.PhylogeneticTree;
 import data.RootedTriplet;
 import ilog.concert.IloException;
@@ -49,16 +47,17 @@ public class ILPSolver {
 		
 		try {
 			cplex = new IloCplex();
+			cplex.setOut(null);
 			cplex.importModel("ilp.lp");
 			double startTime = cplex.getCplexTime(); 
 			cplex.solve(); 
 			double finishTime = cplex.getCplexTime(); 
 			double duration = finishTime - startTime; 
-			cplex.writeSolution("test.sol");
-			RunCplexPrintOutput reader = new RunCplexPrintOutput(); 
-			System.out.println("DURATION YO: " + duration);
+//			cplex.writeSolution("test.sol");
+//			RunCplexPrintOutput reader = new RunCplexPrintOutput(); 
+//			System.out.println("DURATION YO: " + duration);
 			this.duration = duration;
-			return reader.getTriplets();
+//			return reader.getTriplets();
 
 		} catch (IloException e) {
 			// TODO Auto-generated catch block

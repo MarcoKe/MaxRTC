@@ -142,7 +142,6 @@ public class PhylogeneticTree {
 			}
 		}
 		
-		System.out.println(leaveSet);
 		
 		List<Integer> leaves = new ArrayList<>(leaveSet);
 		for (int i = 0; i < leaves.size()-1; i++) {
