@@ -202,6 +202,56 @@ public class PhylogeneticTree {
 		return root; 
 	}
 	
+	public boolean isDense(List<RootedTriplet> triplets) {
+		// construct label set 
+		Set<Integer> labels = new HashSet<>(); 
+		
+		for (RootedTriplet t : triplets) {
+			labels.add(t.a); 
+			labels.add(t.b); 
+			labels.add(t.c); 
+		}
+		
+		List<Integer> labelList = new ArrayList<>(labels); 
+		List<Set<Integer>> labelSetRepr = new ArrayList<>(); 
+		List<Set<Integer>> labelSetUnrepr = new ArrayList<>(); 
+		for (int i = 0; i < labelList.size(); i++) {
+			for (int j = i+1; j < labelList.size(); j++) {
+				for (int k = j+1; k < labelList.size(); k++) {
+					Set<Integer> labelSet = new HashSet<>(); 
+					labelSet.add(labelList.get(i)); 
+					labelSet.add(labelList.get(j)); 
+					labelSet.add(labelList.get(k)); 
+
+					
+					System.out.println("label subset: " + labelSet.toString());
+					boolean found = false; 
+					for (RootedTriplet t : triplets) {
+						if (labelSet.contains(t.a) && labelSet.contains(t.b) && labelSet.contains(t.c)) {
+							if (found == true) {
+								System.out.println("NOT MINIMALLY DENSE LOOKS LIKE");
+							}
+							found = true; 
+							labelSetRepr.add(labelSet); 
+							System.out.println("triplet found: " + t.toString());
+						}
+					}
+					
+					if (!found) {
+						labelSetUnrepr.add(labelSet);
+					}
+				}
+			}
+		}
+		
+		System.out.println("repr: " + labelSetRepr.size() + " Unrepr: " + labelSetUnrepr.size());
+		
+		if (labelSetUnrepr.size() == 0) {
+			return true; 
+		}
+		return false; 
+	}
+	
 	
 	
 	
