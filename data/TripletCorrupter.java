@@ -9,7 +9,7 @@ import maxrtc.ILPSolver;
 
 public class TripletCorrupter {
 
-	public List<RootedTriplet> corrupt(List<RootedTriplet> triplets, double corruptionRate) {
+	public List<RootedTriplet> corrupt2(List<RootedTriplet> triplets, double corruptionRate) {
 		List<RootedTriplet> corruptedTriplets = new ArrayList<>(); 
 		Random random = new Random(); 
 		
@@ -36,7 +36,7 @@ public class TripletCorrupter {
 		
 	}
 	
-	public List<RootedTriplet> corrupt2(List<RootedTriplet> triplets, double corruptionRate) {
+	public List<RootedTriplet> corrupt(List<RootedTriplet> triplets, double corruptionRate) {
 		List<RootedTriplet> corruptedTriplets = new ArrayList<>(triplets); 
 		Random random = new Random(); 		
 		List<Integer> indices = selectRandomIndices(triplets.size(), corruptionRate); 

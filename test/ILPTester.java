@@ -95,7 +95,7 @@ public class ILPTester {
 	
 	//16:18
 	public static void main(String[] args) {
-		ILPTester tester = new ILPTester(0.0, 0.6, 0.1, 7, 19, 1, 1);
+		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
 		tester.gridTest();
 	}
 
