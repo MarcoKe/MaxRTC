@@ -3,6 +3,8 @@ package cplexutil;
 
 import ilog.concert.*;
 import ilog.cplex.*;
+import ilog.cplex.IloCplex.UnknownObjectException;
+
 import java.util.*;
 
 import data.RootedTriplet;
@@ -93,6 +95,18 @@ public class RunCplexPrintOutput
 		return triplets; 
 
 	}
+	
+	public void getValues(IloCplex cplex) throws UnknownObjectException, IloException {
+		IloNumVar[] var = parse(cplex);
+
+		//! this lists all the variables in the program, and their values at optimality			
+		double x[] = cplex.getValues(var);
+		for(int loop=0; loop<x.length; loop++ ) {
+			System.out.println(var[loop].getName() + " = " + x[loop]);
+		}
+	}
+	
+	
 
 
 
