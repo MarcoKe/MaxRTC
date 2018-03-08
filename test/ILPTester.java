@@ -71,7 +71,6 @@ public class ILPTester {
 	}
 	
 	public void printResults(double[][][] results) throws IOException {
-	    String str = "Hello";
 	    BufferedWriter writer = new BufferedWriter(new FileWriter("results.txt"));
 	    writer.write("Taxa (min/max/step) [ROWS]: " + taxaMin + ", " + taxaMax + ", " + taxaStep + "\n");
 	    writer.write("Corruption (min/max/step) [COLS]: " + corruptionMin + ", " + corruptionMax + ", " + corruptionStep + "\n");
@@ -95,7 +94,8 @@ public class ILPTester {
 	
 	//16:18
 	public static void main(String[] args) {
-		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
+//		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
+		ILPTester tester = new ILPTester(0.0, 0.0, 0.0, 6, 14, 1, 1); 
 		tester.gridTest();
 	}
 
