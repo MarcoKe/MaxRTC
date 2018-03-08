@@ -48,6 +48,7 @@ public class ILPSolver {
 		try {
 			cplex = new IloCplex();
 			cplex.setOut(null);
+			cplex.setParam(IloCplex.Param.ClockType, 2);
 			cplex.importModel("ilp.lp");
 			double startTime = cplex.getCplexTime(); 
 			cplex.solve(); 
