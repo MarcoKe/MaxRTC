@@ -18,8 +18,9 @@ public class ILPTester {
 	int taxaMax; 
 	int taxaStep; 
 	int repetitions;
+	boolean relax; 
 	
-	public ILPTester(double corruptionMin, double corruptionMax, double corruptionStep, int taxaMin, int taxaMax, int taxaStep, int repetitions) {
+	public ILPTester(double corruptionMin, double corruptionMax, double corruptionStep, int taxaMin, int taxaMax, int taxaStep, int repetitions, boolean relax) {
 		this.corruptionMin = corruptionMin; 
 		this.corruptionMax = corruptionMax; 
 		this.corruptionStep = corruptionStep; 	
@@ -27,6 +28,7 @@ public class ILPTester {
 		this.taxaMax = taxaMax; 
 		this.taxaStep = taxaStep; 
 		this.repetitions = repetitions; 
+		this.relax = relax; 
 		corruptionArr = new double[(int) Math.round((corruptionMax-corruptionMin)/corruptionStep)+1];
 		
 		double c = corruptionMin;
@@ -37,7 +39,7 @@ public class ILPTester {
 	}
 	
 	public ILPTester() {
-		this(0.0, 0.66, 0.01, 7, 15, 1, 1);
+		this(0.0, 0.66, 0.01, 7, 15, 1, 1, false);
 	}
 	
 	public void gridTest() {
@@ -53,7 +55,7 @@ public class ILPTester {
 				for (int rep = 0; rep < repetitions; rep++) {
 					PhylogeneticTree tree = gen.generateTree(taxa);
 					ILPSolver solver = new ILPSolver(cor.corrupt(tree.findAllTriplets(), corruptionArr[corruption]));
-					solver.solve(); 
+					solver.solve(relax); 
 					
 					results[taxa-taxaMin][corruption][rep] = solver.getDuration();
 					
@@ -95,7 +97,7 @@ public class ILPTester {
 	//16:18
 	public static void main(String[] args) {
 //		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
-		ILPTester tester = new ILPTester(0.0, 0.0, 0.0, 6, 14, 1, 1); 
+		ILPTester tester = new ILPTester(0.0, 0.0, 0.0, 6, 14, 1, 1, false); 
 		tester.gridTest();
 	}
 

@@ -10,6 +10,7 @@ public class LPWriter {
 	private String constraints = ""; 
 	private int numConstraints = 0; 
 	private String integerVars = ""; 
+	private String bounds = "Bounds \n";
 	
 	public void addObjective(boolean max, String obj) {
 		this.max = max; 
@@ -21,8 +22,8 @@ public class LPWriter {
 		numConstraints++; 
 	}
 	
-	public void addBound() {
-		
+	public void addBound(String var, double min, double max) {
+		bounds += min +  " <= " + var + " <= " + max + "\n";
 	}
 	
 	public void addIntegerVars(boolean binary, String vars) {
@@ -53,6 +54,7 @@ public class LPWriter {
 		
 		// integer vars 
 		program += integerVars;
+		program += bounds;
 		
 		
 		program += "End";

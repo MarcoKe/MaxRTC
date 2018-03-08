@@ -41,8 +41,8 @@ public class ILPSolver {
 	}
 
 	
-	public List<RootedTriplet> solve() {
-		writeILP(); 
+	public List<RootedTriplet> solve(boolean relax) {
+		writeILP(relax); 
 		IloCplex cplex;
 		
 		try {
@@ -56,7 +56,6 @@ public class ILPSolver {
 			double duration = finishTime - startTime; 
 //			cplex.writeSolution("test.sol");
 //			RunCplexPrintOutput reader = new RunCplexPrintOutput(); 
-//			System.out.println("DURATION YO: " + duration);
 			this.duration = duration;
 //			return reader.getTriplets();
 
@@ -68,7 +67,7 @@ public class ILPSolver {
 	}
 
 	// builds ilp and writes to file 
-	public void writeILP() {
+	public void writeILP(boolean relax) {
 		LPWriter lpwriter = new LPWriter(); 
 
 		String obj = "";
@@ -79,8 +78,13 @@ public class ILPSolver {
 				for (int k : labels) {
 
 					
-					if (i != j && i != k && j != k)
+					if (i != j && i != k && j != k) {
 						binaries += "t"+i+j+k + " ";
+						if (relax) {
+							lpwriter.addBound("t"+i+j+k, 0.0, 1.0);
+						}
+					}
+					
 
 				}
 			}
@@ -92,7 +96,8 @@ public class ILPSolver {
 
 		obj = obj.substring(0, obj.length()-3);
 		lpwriter.addObjective(true, obj);
-		lpwriter.addIntegerVars(true, binaries);  
+		if (!relax)
+			lpwriter.addIntegerVars(true, binaries);  
 
 		// constraints 
 		for (int i : labels) {
@@ -148,7 +153,7 @@ public class ILPSolver {
 		t.addEdge(3, 8);
 
 		ILPSolver solver = new ILPSolver(t.findAllTriplets());
-		solver.solve();
+		solver.solve(true);
 	}
 
 }
