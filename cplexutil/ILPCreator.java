@@ -39,8 +39,8 @@ public class ILPCreator {
 		return labels; 
 	}
 	
-	public IloCplex createILP() throws IloException {
-		writeILP(false); 
+	public IloCplex createILP(boolean relax) throws IloException {
+		writeILP(relax); 
 		IloCplex cplex; 
 		
 		cplex = new IloCplex(); 
@@ -67,9 +67,9 @@ public class ILPCreator {
 
 					
 					if (i != j && i != k && j != k) {
-						binaries += "t"+i+j+k + " ";
+						binaries += "t"+i+","+j+";"+k + " ";
 						if (relax) {
-							lpwriter.addBound("t"+i+j+k, 0.0, 1.0);
+							lpwriter.addBound("t"+i+","+j+";"+k, 0.0, 1.0);
 						}
 					}
 					
@@ -79,7 +79,7 @@ public class ILPCreator {
 		}
 		
 		for (RootedTriplet t : inputTriplets) { 
-			obj += "t"+t.a+t.b+t.c + " + "; 
+			obj += "t"+t.a+","+t.b+";"+t.c + " + "; 
 		}
 
 		obj = obj.substring(0, obj.length()-3);
@@ -93,7 +93,7 @@ public class ILPCreator {
 				for (int k : labels) {
 					if (!(i == j || i == k 
 							|| j == k)) {
-						lpwriter.addConstraint("t"+i+j+k + " + t" + i+k+j + " + t" + j+k+i + " = 1" );
+						lpwriter.addConstraint("t"+i+","+j+";"+k + " + t" + i+","+k+";"+j + " + t" + j+","+k+";"+i + " = 1" );
 					}
 				}
 			}
@@ -106,10 +106,10 @@ public class ILPCreator {
 						if (!(i == j || i == k || i == l
 								|| j == k || j == l
 								|| l == k)) {
-							lpwriter.addConstraint("t" + i+j+k + " + t" +j+k+l + " - t" + i+k+l + " <= 1");
-							lpwriter.addConstraint("t" + i+j+k + " + t" +j+k+l + " - t" + i+j+l + " <= 1");
-							lpwriter.addConstraint("t" + i+j+l + " + t" +j+k+l + " - t" + i+k+l + " <= 1");
-							lpwriter.addConstraint("t" + i+j+l + " + t" +i+k+l + " - t" + j+k+l + " <= 1");
+							lpwriter.addConstraint("t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
+							lpwriter.addConstraint("t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+j+";"+l + " <= 1");
+							lpwriter.addConstraint("t" + i+","+j+";"+l + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
+							lpwriter.addConstraint("t" + i+","+j+";"+l + " + t" +i+","+k+";"+l + " - t" + j+","+k+";"+l + " <= 1");
 						}
 					}
 				}

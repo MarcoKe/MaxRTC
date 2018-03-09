@@ -71,9 +71,9 @@ public class RunCplexPrintOutput
 					System.out.println(var[loop].getName() + " = " + x[loop]);
 					if (x[loop] == 1.0) {
 						String varname = var[loop].getName();
-						int a = Character.getNumericValue(varname.charAt(1)); 
-						int b = Character.getNumericValue(varname.charAt(2)); 
-						int c = Character.getNumericValue(varname.charAt(3)); 
+						int a = Integer.parseInt(varname.split("t")[1].split(",")[0]); 
+						int b = Integer.parseInt(varname.split("t")[1].split(",")[1].split(";")[0]); 
+						int c = Integer.parseInt(varname.split(";")[1]); 
 
 						triplets.add(new RootedTriplet(a,b,c));
 					}
