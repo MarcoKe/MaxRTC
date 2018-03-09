@@ -4,9 +4,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import cplexutil.RunCplexPrintOutput;
 import data.PhylogeneticTree;
 import data.RandomTreeGenerator;
 import data.TripletCorrupter;
+import ilog.concert.IloException;
+import ilog.cplex.IloCplex;
 import maxrtc.ILPSolver;
 
 public class ILPTester {
@@ -42,7 +45,7 @@ public class ILPTester {
 		this(0.0, 0.66, 0.01, 7, 15, 1, 1, false);
 	}
 	
-	public void gridTest() {
+	public void gridTest() throws IloException {
 		RandomTreeGenerator gen = new RandomTreeGenerator(); 
 		TripletCorrupter cor = new TripletCorrupter(); 
 		int count = 0;
@@ -72,6 +75,47 @@ public class ILPTester {
 		}
 	}
 	
+	public void gridTestFrac() throws IloException {
+		RandomTreeGenerator gen = new RandomTreeGenerator(); 
+		TripletCorrupter cor = new TripletCorrupter(); 
+		
+		
+		for (int taxa = taxaMin; taxa <= taxaMax; taxa += taxaStep) {
+			System.out.println("TAXA: " + taxa);
+			for (int corruption = 0; corruption < corruptionArr.length; corruption++) {
+				for (int rep = 0; rep < repetitions; rep++) {
+					PhylogeneticTree tree = gen.generateTree(taxa);
+					ILPSolver solver = new ILPSolver(cor.corrupt(tree.findAllTriplets(), corruptionArr[corruption]));
+					IloCplex cplex = solver.solve(relax); 
+					RunCplexPrintOutput thing = new RunCplexPrintOutput(); 
+					
+				    BufferedWriter writer;
+					try {
+						String filename = "tests/t" + taxa + "_c" + ((int) Math.round(corruptionArr[corruption]*100)) + "_" + rep;
+						writer = new BufferedWriter(new FileWriter(filename+".frac.txt"));
+						writer.write(thing.getValues(cplex));
+					    writer.close();  
+					    writer = new BufferedWriter(new FileWriter(filename+".dur.txt"));
+					    writer.write(solver.getDuration() + " \n");
+					    writer.close();
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					System.out.println(thing.getValues(cplex));
+
+					
+					
+				}
+
+			}
+		}
+		
+		
+	}
+	
 	public void printResults(double[][][] results) throws IOException {
 	    BufferedWriter writer = new BufferedWriter(new FileWriter("results.txt"));
 	    writer.write("Taxa (min/max/step) [ROWS]: " + taxaMin + ", " + taxaMax + ", " + taxaStep + "\n");
@@ -94,10 +138,10 @@ public class ILPTester {
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IloException {
 //		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
-		ILPTester tester = new ILPTester(0.0, 0.0, 0.0, 6, 14, 1, 1, false); 
-		tester.gridTest();
+		ILPTester tester = new ILPTester(0.0, 0.6, 0.1, 6, 11, 1, 10, true); 
+		tester.gridTestFrac();
 	}
 
 }

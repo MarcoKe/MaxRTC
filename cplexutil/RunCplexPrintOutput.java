@@ -96,14 +96,17 @@ public class RunCplexPrintOutput
 
 	}
 	
-	public void getValues(IloCplex cplex) throws UnknownObjectException, IloException {
+	public String getValues(IloCplex cplex) throws UnknownObjectException, IloException {
 		IloNumVar[] var = parse(cplex);
 
 		//! this lists all the variables in the program, and their values at optimality			
 		double x[] = cplex.getValues(var);
+		String values = ""; 
 		for(int loop=0; loop<x.length; loop++ ) {
-			System.out.println(var[loop].getName() + " = " + x[loop]);
+			values += var[loop].getName() + " = " + x[loop] + "\n";
 		}
+		
+		return values; 
 	}
 	
 	

@@ -42,11 +42,11 @@ public class ILPSolver {
 	}
 
 	
-	public List<RootedTriplet> solve(boolean relax) {
+	public IloCplex solve(boolean relax) throws IloException {
 		ILPCreator creator = new ILPCreator(inputTriplets);
-		
+		IloCplex cplex = creator.createILP(relax);
 		try {
-			IloCplex cplex = creator.createILP();
+			
 			
 			double startTime = cplex.getCplexTime(); 
 			cplex.solve(); 
@@ -61,7 +61,7 @@ public class ILPSolver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return cplex;
 	}
 	
 	
@@ -73,7 +73,7 @@ public class ILPSolver {
 	}
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IloException {
 		PhylogeneticTree t = new PhylogeneticTree(new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8)));
 		t.addEdge(0, 1);
 		t.addEdge(0, 2);
