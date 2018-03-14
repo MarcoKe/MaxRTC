@@ -117,6 +117,17 @@ public class PhylogeneticTree {
 		return adjListArray.get(a).size() == 0; 
 	}
 	
+	public List<Integer> getLeaves() {
+		Set<Integer> leaveSet = new HashSet<>(); 
+		for (int i : adjListArray.keySet()) {
+			if (isLeaf(i)) {
+				leaveSet.add(i); 
+			}
+		}
+		
+		return new ArrayList<>(leaveSet);
+	}
+	
 	public List<RootedTriplet> findAllTriplets() {
 		List<RootedTriplet> triplets = new ArrayList<>(); 
 		
@@ -135,15 +146,10 @@ public class PhylogeneticTree {
 //			}
 //		}
 		
-		Set<Integer> leaveSet = new HashSet<>(); 
-		for (int i : adjListArray.keySet()) {
-			if (isLeaf(i)) {
-				leaveSet.add(i); 
-			}
-		}
 		
 		
-		List<Integer> leaves = new ArrayList<>(leaveSet);
+		
+		List<Integer> leaves = getLeaves();
 		for (int i = 0; i < leaves.size()-1; i++) {
 			for (int j = i+1; j < leaves.size(); j++) {
 				for (int k = 0; k < leaves.size(); k++) {
