@@ -13,7 +13,6 @@ import java.util.Set;
 
 import data.PhylogeneticTree;
 import data.RootedTriplet;
-import maxrtc.ILPSolver;
 
 public class RecursiveTreeBuilder {	
 	
@@ -46,8 +45,7 @@ public class RecursiveTreeBuilder {
 		
 	}
 	
-	public Set<Integer> findRootAdjacent(List<RootedTriplet> triplets, Set<Integer> labels) {
-		
+	public Set<Integer> findRootAdjacent(List<RootedTriplet> triplets, Set<Integer> labels) {		
 		Set<Integer> common = new HashSet<>(); 
 		for (int label : labels) {
 			for (RootedTriplet t : triplets) {
@@ -88,8 +86,7 @@ public class RecursiveTreeBuilder {
 			}
 		}
 			
-		return tripletsInSubtree;
-		
+		return tripletsInSubtree;		
 	}
 	
 	public Map<Integer, Set<Integer>> findSubtrees(List<RootedTriplet> triplets, Set<Integer> rootAdjacent) {		

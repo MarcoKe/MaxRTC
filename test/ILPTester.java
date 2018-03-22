@@ -84,14 +84,18 @@ public class ILPTester {
 			System.out.println("TAXA: " + taxa);
 			for (int corruption = 0; corruption < corruptionArr.length; corruption++) {
 				for (int rep = 0; rep < repetitions; rep++) {
+					String filename = "tests/t" + taxa + "_c" + ((int) Math.round(corruptionArr[corruption]*100)) + "_" + rep;
+
 					PhylogeneticTree tree = gen.generateTree(taxa);
-					ILPSolver solver = new ILPSolver(cor.corrupt(tree.findAllTriplets(), corruptionArr[corruption]));
+					ILPSolver solver = new ILPSolver(cor.corrupt(tree.findAllTriplets(), corruptionArr[corruption]), filename+".lp");
 					IloCplex cplex = solver.solve(relax); 
+//					cplex.writeSolution(filename + ".sol");
+
 					RunCplexPrintOutput thing = new RunCplexPrintOutput(); 
+					
 					
 				    BufferedWriter writer;
 					try {
-						String filename = "tests/t" + taxa + "_c" + ((int) Math.round(corruptionArr[corruption]*100)) + "_" + rep;
 						writer = new BufferedWriter(new FileWriter(filename+".frac.txt"));
 						writer.write(thing.getValues(cplex));
 					    writer.close();  
@@ -104,7 +108,7 @@ public class ILPTester {
 						e.printStackTrace();
 					}
 
-					System.out.println(thing.getValues(cplex));
+//					System.out.println(thing.getValues(cplex));
 
 					
 					
@@ -115,6 +119,8 @@ public class ILPTester {
 		
 		
 	}
+	
+	
 	
 	public void printResults(double[][][] results) throws IOException {
 	    BufferedWriter writer = new BufferedWriter(new FileWriter("results.txt"));
@@ -140,7 +146,7 @@ public class ILPTester {
 	
 	public static void main(String[] args) throws IloException {
 //		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 7, 10, 1, 10);
-		ILPTester tester = new ILPTester(0.0, 0.6, 0.1, 6, 11, 1, 10, true); 
+		ILPTester tester = new ILPTester(0.0, 0.66, 0.02, 6, 11, 1, 10, true); 
 		tester.gridTestFrac();
 	}
 

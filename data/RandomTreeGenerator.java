@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class RandomTreeGenerator {
 	
-	public PhylogeneticTree generateTree(int numTaxa) {
+	public PhylogeneticTree generateTreeOld(int numTaxa) {
 		Random random = new Random();
 		PhylogeneticTree tree = new PhylogeneticTree();
 		
@@ -35,6 +35,30 @@ public class RandomTreeGenerator {
 		return tree; 
 	}
 	
+	public PhylogeneticTree generateTree(int numTaxa) {
+		Random random = new Random();
+		PhylogeneticTree tree = new PhylogeneticTree();
+		
+		int label = 0; 
+		
+		List<Integer> leaves = new ArrayList<>();
+		leaves.add(label); 
+		label++; 
+		
+		while(leaves.size() < numTaxa) {
+			int index = random.nextInt(leaves.size()); 
+			tree.addEdge(leaves.get(index), label);
+			tree.addEdge(leaves.get(index), label+1);
+			leaves.remove(index);
+			leaves.add(label); 
+			leaves.add(label+1); 
+			label += 2; 
+
+		}
+		
+		return tree; 
+	}
+	
 	public List<RootedTriplet> getRandomTreeTriplets(int numTaxa) {
 		return generateTree(numTaxa).findAllTriplets(); 
 	}
@@ -56,8 +80,9 @@ public class RandomTreeGenerator {
 	
 	public static void main(String[] args) {
 		RandomTreeGenerator gen = new RandomTreeGenerator(); 
-		PhylogeneticTree tree = gen.generateTree(20);
+		PhylogeneticTree tree = gen.generateTree(7);
 		System.out.println(tree.getLeaves().size());
+		System.out.println(tree.toString());
 //		System.out.println(tree.toString());
 	}
 

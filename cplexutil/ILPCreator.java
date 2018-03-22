@@ -16,12 +16,14 @@ import ilog.cplex.IloCplex;
 public class ILPCreator {
 	List<RootedTriplet> inputTriplets; 
 	List<Integer> labels; 
+	String filename; 
 	
 
-	public ILPCreator(List<RootedTriplet> triplets) {
+	public ILPCreator(List<RootedTriplet> triplets, String filename) {
 		this.inputTriplets = triplets; 
 		Set<Integer> labels = getLabelSet(triplets); 
 		this.labels = new ArrayList<>(labels); 
+		this.filename = filename;
 
 		
 
@@ -46,7 +48,7 @@ public class ILPCreator {
 		cplex = new IloCplex(); 
 		cplex.setOut(null); 
 		cplex.setParam(IloCplex.Param.ClockType, 2);
-		cplex.importModel("ilp.lp");
+		cplex.importModel(filename);
 		
 		return cplex;
 	}
@@ -93,7 +95,7 @@ public class ILPCreator {
 				for (int k : labels) {
 					if (!(i == j || i == k 
 							|| j == k)) {
-						lpwriter.addConstraint("t"+i+","+j+";"+k + " + t" + i+","+k+";"+j + " + t" + j+","+k+";"+i + " = 1" );
+						lpwriter.addConstraint(1, "t"+i+","+j+";"+k + " + t" + i+","+k+";"+j + " + t" + j+","+k+";"+i + " = 1" );
 					}
 				}
 			}
@@ -106,10 +108,10 @@ public class ILPCreator {
 						if (!(i == j || i == k || i == l
 								|| j == k || j == l
 								|| l == k)) {
-							lpwriter.addConstraint("t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
-							lpwriter.addConstraint("t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+j+";"+l + " <= 1");
-							lpwriter.addConstraint("t" + i+","+j+";"+l + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
-							lpwriter.addConstraint("t" + i+","+j+";"+l + " + t" +i+","+k+";"+l + " - t" + j+","+k+";"+l + " <= 1");
+							lpwriter.addConstraint(2, "t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
+							lpwriter.addConstraint(3, "t" + i+","+j+";"+k + " + t" +j+","+k+";"+l + " - t" + i+","+j+";"+l + " <= 1");
+							lpwriter.addConstraint(4, "t" + i+","+j+";"+l + " + t" +j+","+k+";"+l + " - t" + i+","+k+";"+l + " <= 1");
+							lpwriter.addConstraint(5, "t" + i+","+j+";"+l + " + t" +i+","+k+";"+l + " - t" + j+","+k+";"+l + " <= 1");
 						}
 					}
 				}
@@ -117,7 +119,7 @@ public class ILPCreator {
 		}   
 		
 		try {
-			lpwriter.writeFile("ilp.lp");
+			lpwriter.writeFile(filename);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

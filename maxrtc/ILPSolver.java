@@ -18,15 +18,19 @@ public class ILPSolver {
 	List<RootedTriplet> inputTriplets; 
 	List<Integer> labels; 
 	double duration = 0.0;
+	String filename;
 	
 
-	public ILPSolver(List<RootedTriplet> triplets) {
+	public ILPSolver(List<RootedTriplet> triplets, String filename) {
 		this.inputTriplets = triplets; 
 		Set<Integer> labels = getLabelSet(triplets); 
 		this.labels = new ArrayList<>(labels); 
+		this.filename = filename;	
 
-		
-
+	}
+	
+	public ILPSolver(List<RootedTriplet> triplets) {
+		this(triplets, "ilp.lp");
 	}
 	
 	public Set<Integer> getLabelSet(List<RootedTriplet> triplets) {
@@ -43,7 +47,7 @@ public class ILPSolver {
 
 	
 	public IloCplex solve(boolean relax) throws IloException {
-		ILPCreator creator = new ILPCreator(inputTriplets);
+		ILPCreator creator = new ILPCreator(inputTriplets, filename);
 		IloCplex cplex = creator.createILP(relax);
 		try {
 			

@@ -22,6 +22,11 @@ public class LPWriter {
 		numConstraints++; 
 	}
 	
+	public void addConstraint(int id, String constraint) {
+		constraints += " c" + id + "_" + (numConstraints+1) + ": " + constraint + "\n";
+		numConstraints++; 
+	}
+	
 	public void addBound(String var, double min, double max) {
 		bounds += min +  " <= " + var + " <= " + max + "\n";
 	}
@@ -71,9 +76,4 @@ public class LPWriter {
 		    writer.close();		
 	}
 	
-	public static void main(String[] args) {
-		String s = "testest"; 
-		System.out.println(s.substring(0, s.length()-2));
-	}
-
 }

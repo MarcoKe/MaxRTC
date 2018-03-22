@@ -258,6 +258,37 @@ public class PhylogeneticTree {
 		return false; 
 	}
 	
+	public void balance() {
+		int left = adjListArray.get(root).get(0);
+		int right = adjListArray.get(root).get(1);
+		
+		System.out.println("left " + countChildren(left));
+		System.out.println("right " + countChildren(right));
+
+		
+
+	}
+	
+	public int getLeftCount() {
+		return countChildren(adjListArray.get(root).get(0)); 		
+	}
+	
+	public int getRightCount() {
+		return countChildren(adjListArray.get(root).get(1)); 
+	}
+	
+	public int countChildren(int node) {
+		if (adjListArray.get(node) == null || adjListArray.get(node).size() == 0) {
+			return 1;
+		}
+		
+		int sum = 0; 
+		for (int child : adjListArray.get(node)) {
+			sum += countChildren(child);
+		}
+		
+		return sum+1; 
+	}
 	
 	
 	

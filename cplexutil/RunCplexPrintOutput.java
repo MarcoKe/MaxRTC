@@ -44,8 +44,7 @@ public class RunCplexPrintOutput
 		return varray;
 	}
 
-	public List<RootedTriplet> getTriplets() {
-		String fileName = "ilp.lp";	//! The LP we are going to solve
+	public List<RootedTriplet> getTriplets(String fileName) {
 		List<RootedTriplet> triplets = new ArrayList<>();; 
 
 		try
@@ -68,7 +67,7 @@ public class RunCplexPrintOutput
 				double x[] = cplex.getValues(var);
 				for(int loop=0; loop<x.length; loop++ )
 				{
-					System.out.println(var[loop].getName() + " = " + x[loop]);
+//					System.out.println(var[loop].getName() + " = " + x[loop]);
 					if (x[loop] == 1.0) {
 						String varname = var[loop].getName();
 						int a = Integer.parseInt(varname.split("t")[1].split(",")[0]); 
