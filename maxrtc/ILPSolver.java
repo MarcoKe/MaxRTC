@@ -46,14 +46,16 @@ public class ILPSolver {
 	}
 
 	
-	public IloCplex solve(boolean relax) throws IloException {
+	public IloCplex solve(boolean relax) throws IloException, IOException {
 		ILPCreator creator = new ILPCreator(inputTriplets, filename);
 		IloCplex cplex = creator.createILP(relax);
 		try {
 			
 			
 			double startTime = cplex.getCplexTime(); 
+			System.out.println("-solving");
 			cplex.solve(); 
+			System.out.println("-done");
 			double finishTime = cplex.getCplexTime(); 
 			double duration = finishTime - startTime; 
 //			cplex.writeSolution("test.sol");
@@ -77,7 +79,7 @@ public class ILPSolver {
 	}
 
 
-	public static void main(String[] args) throws IloException {
+	public static void main(String[] args) throws IloException, IOException {
 		PhylogeneticTree t = new PhylogeneticTree(new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8)));
 		t.addEdge(0, 1);
 		t.addEdge(0, 2);

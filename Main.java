@@ -97,31 +97,47 @@ public class Main {
 //		}
 //	}
 	
-	public static void main(String[] args) {
-		RandomTreeGenerator gen = new RandomTreeGenerator();
-//		int left = 0; 
-//		int right = 0; 
+//	public static void main(String[] args) {
+//		RandomTreeGenerator gen = new RandomTreeGenerator();
+////		int left = 0; 
+////		int right = 0; 
+////		
+//		String sl = "["; 
+//		String sr = "["; 
+//
 //		
-		String sl = "["; 
-		String sr = "["; 
-
+//		for (int i = 0; i < 10000; i++) {
+//			PhylogeneticTree tree = gen.generateTree(20);
+//			int left = tree.getLeftCount(); 
+//			int right = tree.getRightCount();
+//			System.out.println((double) left/right);
+//			sl += left + ", ";
+//			sr += right + ", ";
+//
+//		}
+//		
+//		sr += "]"; 
+//		sl += "]";
+//		
+//		System.out.println(sl);
+//		System.out.println(sr);
+////		System.out.println(left + " " + right);
+//
+//	}
+	
+	public static void main(String[] args) {
+		PhylogeneticTree tree = new PhylogeneticTree(); 
+		tree.addEdge(0, 7);
+		tree.addEdge(0, 8);
+		tree.addEdge(7, 1);
+		tree.addEdge(7, 2);
+		tree.addEdge(8, 3);
+		tree.addEdge(8, 9);
+		tree.addEdge(9, 10);
+		tree.addEdge(9, 6);
+		tree.addEdge(10, 4);
+		tree.addEdge(10, 5);
 		
-		for (int i = 0; i < 10000; i++) {
-			PhylogeneticTree tree = gen.generateTree(20);
-			int left = tree.getLeftCount(); 
-			int right = tree.getRightCount();
-			System.out.println((double) left/right);
-			sl += left + ", ";
-			sr += right + ", ";
-
-		}
-		
-		sr += "]"; 
-		sl += "]";
-		
-		System.out.println(sl);
-		System.out.println(sr);
-//		System.out.println(left + " " + right);
-
+		System.out.println(tree.findAllTriplets());
 	}
 }
