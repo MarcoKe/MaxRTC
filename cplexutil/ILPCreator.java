@@ -17,6 +17,7 @@ public class ILPCreator {
 	List<RootedTriplet> inputTriplets; 
 	List<Integer> labels; 
 	String filename; 
+	List<RootedTriplet> fix;
 	
 
 	public ILPCreator(List<RootedTriplet> triplets, String filename) {
@@ -24,6 +25,17 @@ public class ILPCreator {
 		Set<Integer> labels = getLabelSet(triplets); 
 		this.labels = new ArrayList<>(labels); 
 		this.filename = filename;
+
+		
+
+	}
+	
+	public ILPCreator(List<RootedTriplet> triplets, String filename, List<RootedTriplet> fix) {
+		this.inputTriplets = triplets; 
+		Set<Integer> labels = getLabelSet(triplets); 
+		this.labels = new ArrayList<>(labels); 
+		this.filename = filename;
+		this.fix = fix; 
 
 		
 
@@ -42,35 +54,36 @@ public class ILPCreator {
 	}
 	
 	public IloCplex createILP(boolean relax) throws IloException, IOException {
-		System.out.println("-creating lp");
+//		System.out.println("-creating lp");
 		writeILP(relax); 
-		System.out.println("-done");
+//		System.out.println("-done");
 		IloCplex cplex; 
 		
 		cplex = new IloCplex(); 
 		cplex.setOut(null); 
 		cplex.setParam(IloCplex.Param.ClockType, 2);
-		System.out.println("-importing lp");
+//		System.out.println("-importing lp");
 		cplex.importModel(filename);
-		System.out.println("-done");
+//		System.out.println("-done");
 		
 		return cplex;
 	}
 
 	
 	public String tripletString(int a, int b,int c) {
-		String s = "t"; 
+		StringBuilder s = new StringBuilder(); 
+		s.append("t");
 		
 		if (a < b) {
-			s += a+","+b;
+			s.append(a+","+b);
 		}
 		else {
-			s += b+","+a;
+			s.append(b+","+a);
 		}
 		
-		s+= ";"+c;
+		s.append(";"+c);
 		
-		return s; 
+		return s.toString(); 
 	}
 
 	// builds ilp and writes to file 
@@ -79,19 +92,13 @@ public class ILPCreator {
 
 		String obj = "";
 		String binaries = ""; 
+		List<String> extraCons = new ArrayList<>();
 		
 		for (int i : labels) {
 			for (int j : labels) {
 				for (int k : labels) {
-
-					
 					if (i != j && i != k && j != k) {
-//					if (i < j && i != k && j != k) {
-
-						binaries += tripletString(i,j,k) + " ";
-						if (relax) {
-							lpwriter.addBound(tripletString(i,j,k), 0.0, 1.0);
-						}
+						lpwriter.addBound(tripletString(i,j,k), 0.0, 1.0);
 					}
 					
 
@@ -107,6 +114,35 @@ public class ILPCreator {
 		lpwriter.addObjective(true, obj);
 		if (!relax)
 			lpwriter.addIntegerVars(true, binaries);  
+		lpwriter.addIntegerVars(true, binaries);
+
+//		lpwriter.addConstraint(10, obj + " >= " + inputTriplets.size()/3);
+//		lpwriter.addConstraint(10, obj + " = " + 102);
+
+		
+		
+		for (int i : labels) {
+			for (int j : labels) {
+				for (int k : labels) {
+					if (i != j && i != k && j != k) {
+						boolean special = false;
+						if (fix != null) {
+							for (RootedTriplet fixTriplet : fix) {
+								if (fixTriplet.a == i && fixTriplet.b == j && fixTriplet.c == k) {
+									special = true; 
+								}
+							}
+						}
+						if (relax && fix != null && special) {
+							lpwriter.addConstraint(100, tripletString(i,j,k) + " = 1");
+						}
+					}
+					
+
+				}
+			}
+		}
+		
 
 		// constraints 
 		for (int i : labels) {
@@ -143,6 +179,8 @@ public class ILPCreator {
 				}
 			}
 		}   
+		
+		
 		
 		try {
 			lpwriter.writeFile(filename);

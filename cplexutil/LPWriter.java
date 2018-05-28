@@ -6,11 +6,11 @@ import java.io.IOException;
 
 public class LPWriter {
 	private boolean max = true; 
-	private String objective = ""; 
-	private String constraints = ""; 
+	private StringBuilder objective = new StringBuilder(); 
+	private StringBuilder constraints = new StringBuilder(); 
 	private int numConstraints = 0; 
-	private String integerVars = ""; 
-	private String bounds = "";
+	private StringBuilder integerVars = new StringBuilder(); 
+	private StringBuilder bounds = new StringBuilder();
 	private String filename; 
 	private BufferedWriter writer; 
 	
@@ -22,7 +22,7 @@ public class LPWriter {
 	
 	public void addObjective(boolean max, String obj) throws IOException {
 		this.max = max; 
-		this.objective += obj;
+		this.objective.append(obj);
 		
 		String program = ""; 
 		if (max) 
@@ -36,7 +36,7 @@ public class LPWriter {
 	}
 	
 	public void addConstraint(String constraint) {
-		constraints += " c" + (numConstraints+1) + ": " + constraint + "\n";
+		constraints.append(" c" + (numConstraints+1) + ": " + constraint + "\n");
 		numConstraints++; 
 	}
 	
@@ -47,22 +47,22 @@ public class LPWriter {
 	}
 	
 	public void addBound(String var, double min, double max) {
-		bounds += min +  " <= " + var + " <= " + max + "\n";
+		bounds.append(min +  " <= " + var + " <= " + max + "\n");
 	}
 	
 	public void addIntegerVars(boolean binary, String vars) {
 		if (binary) 
-			integerVars += "Binaries \n"; 
+			integerVars.append("Binaries \n"); 
 		else 
-			integerVars += "Generals \n"; 
+			integerVars.append("Generals \n"); 
 		
-		integerVars += " " + vars + "\n";
+		integerVars.append(" " + vars + "\n");
 		
 	}
 	
 	public String toString() {
 		// objective 
-		String program = ""; 
+		StringBuilder program = new StringBuilder(); 
 //		if (max) 
 //			program += "Maximize \n"; 
 //		else 
@@ -77,16 +77,19 @@ public class LPWriter {
 		// bounds 
 		
 		// integer vars 
-		program += integerVars;
+		
 		if (bounds.length() != 0) {
-			bounds = "Bounds \n" + bounds;
+			bounds.insert(0,"Bounds \n");
+			
 		}
-		program += bounds;
+		program.append(bounds.toString());
+		program.append(integerVars.toString());
 		
 		
-		program += "End";
 		
-		return program; 
+		program.append("End");
+		
+		return program.toString(); 
 	}
 	
 	public void writeFile(String name) throws IOException {

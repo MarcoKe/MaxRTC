@@ -59,6 +59,30 @@ public class TripletCorrupter {
 		return corruptedTriplets;	
 	}
 	
+	// returns a dense set instead of a minimally dense set 
+	public List<RootedTriplet> corruptNonMinimal(List<RootedTriplet> triplets, double corruptionRate) {
+		List<RootedTriplet> corruptedTriplets = new ArrayList<>(triplets); 
+		Random random = new Random(); 		
+		List<Integer> indices = selectRandomIndices(triplets.size(), corruptionRate); 
+		
+		for (int index : indices) {
+			RootedTriplet t = corruptedTriplets.get(index);
+			RootedTriplet newTriplet; 
+			
+			if (random.nextFloat() <= 0.5) {
+				newTriplet = new RootedTriplet(t.a, t.c, t.b);
+			}
+			else {
+				newTriplet = new RootedTriplet(t.c, t.b, t.a); 
+			}
+			
+			corruptedTriplets.add(newTriplet);			
+			
+		}
+		
+		return corruptedTriplets;	
+	}
+	
 	public List<Integer> selectRandomIndices(int size, double fraction) {
 		List<Integer> indices = new ArrayList<>(); 
 		for (int i = 0; i < size; i++) {

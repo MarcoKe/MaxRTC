@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,19 +131,68 @@ public class Main {
 //
 //	}
 	
-	public static void main(String[] args) {
-		PhylogeneticTree tree = new PhylogeneticTree(); 
-		tree.addEdge(0, 7);
-		tree.addEdge(0, 8);
-		tree.addEdge(7, 1);
-		tree.addEdge(7, 2);
-		tree.addEdge(8, 3);
-		tree.addEdge(8, 9);
-		tree.addEdge(9, 10);
-		tree.addEdge(9, 6);
-		tree.addEdge(10, 4);
-		tree.addEdge(10, 5);
+//	public static void main(String[] args) {
+//		RandomTreeGenerator gen = new RandomTreeGenerator();
+//		TripletCorrupter corrupter = new TripletCorrupter();
+//		
+//		int numTrees = 5; 
+//		List<RootedTriplet> triplets = new ArrayList<>(); 
+//		PhylogeneticTree tree = gen.generateTree(8);
+//		triplets.addAll(tree.findAllTriplets());
+//
+////		
+////		for (int i = 0; i < numTrees; i++) {
+////			triplets.addAll(corrupter.corrupt(tree.findAllTriplets(), 0.66));
+////		}
+//
+//		for (int i = 0; i < 20; i++) {
+//			RootedTriplet t = triplets.get(i); 
+//			RootedTriplet t2 = new RootedTriplet(t.b, t.c, t.a); 
+//			RootedTriplet t3 = new RootedTriplet(t.c, t.a, t.b); 
+//			triplets.add(t2); 
+//			triplets.add(t3); 
+//		}
+//		
+//		
+//		BufferedWriter writer;
+//		try {
+//			writer = new BufferedWriter(new FileWriter("test.trips"));
+//		
+//			for (RootedTriplet triplet : triplets) { 
+//				writer.write(triplet.a + " " + triplet.b + " " + triplet.c +"\n");
+//			}
+//			writer.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//
+//
+//	}
+	
+	public static void main(String[] args) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader("canontests/t8_c30_4.lp")); 
+		reader.readLine(); 
+		String obj = reader.readLine(); 
+		obj = obj.substring(6, obj.length());
+		String[] tripletStrings = obj.split("\\+");
+		List<RootedTriplet> triplets = new ArrayList<>(); 
+		for (String t : tripletStrings) {
+			t = t.trim();
+			t = t.substring(1, t.length()); 
+			int a = Integer.parseInt(t.split(",")[0]);
+			int b = Integer.parseInt(t.split(",")[1].split(";")[0]);
+			int c = Integer.parseInt(t.split(";")[1].trim());
+			triplets.add(new RootedTriplet(a, b, c)); 
+		}
 		
-		System.out.println(tree.findAllTriplets());
+		BufferedWriter writer = new BufferedWriter(new FileWriter("canontests/t8_c30_4.trips")); 
+		for (RootedTriplet t : triplets) {
+			writer.write(t.a + " " +t.b + " " +t.c +"\n");
+		}
+		
+		writer.close();
 	}
+	
 }

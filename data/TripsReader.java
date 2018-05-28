@@ -50,6 +50,14 @@ public class TripsReader {
 		return nameToId.get(name);
 	}
 	
+	public void write(List<RootedTriplet> triplets) throws IOException { 
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filename+"mapped"));
+		for (RootedTriplet triplet : triplets) {
+			writer.write(triplet.a + " " + triplet.b + " " + triplet.c + "\n");
+		}
+		writer.close();
+	}
+	
 	public void writeConversionMap() throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename+".map")); 
 		

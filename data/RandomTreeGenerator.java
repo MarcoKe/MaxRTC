@@ -8,6 +8,36 @@ import java.util.Set;
 
 public class RandomTreeGenerator {
 	
+	public PhylogeneticTree generateCaterpillar(int numTaxa) {
+		Random random = new Random();
+		PhylogeneticTree tree = new PhylogeneticTree();
+		
+		int label = 0; 
+		
+		List<Integer> leaves = new ArrayList<>();
+		leaves.add(label); 
+		int currentNode = 0; 
+		label++; 
+		
+		while(leaves.size() < numTaxa) {
+			tree.addEdge(leaves.get(currentNode), label);
+			tree.addEdge(leaves.get(currentNode), label+1);
+			leaves.remove(currentNode);
+			leaves.add(label); 
+			leaves.add(label+1); 
+			if (random.nextDouble() <= 0.5) {
+				currentNode = leaves.size()-1; 
+			}
+			else {
+				currentNode = leaves.size()-2; 
+			}
+			
+			label += 2; 
+		}
+		
+		return tree; 
+	}
+	
 	public PhylogeneticTree generateTreeOld(int numTaxa) {
 		Random random = new Random();
 		PhylogeneticTree tree = new PhylogeneticTree();

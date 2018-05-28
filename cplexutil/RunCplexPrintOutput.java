@@ -108,6 +108,34 @@ public class RunCplexPrintOutput
 		return values; 
 	}
 	
+	public String getOnlyValues(IloCplex cplex) throws UnknownObjectException, IloException {
+		IloNumVar[] var = parse(cplex);
+
+		//! this lists all the variables in the program, and their values at optimality			
+		double x[] = cplex.getValues(var);
+		String values = ""; 
+		for(int loop=0; loop<x.length; loop++ ) {
+			values += x[loop] + " ";
+		}
+		
+		return values; 
+	}
+	
+	public boolean fractional(IloCplex cplex) throws IloException {
+		double eps = 1E-5;
+
+		IloNumVar[] var = parse(cplex);
+		
+		for (double val : cplex.getValues(var)) {
+			if (!(Math.abs(1.0 - val) < eps || Math.abs(0.0 - val) < eps)) {
+				return true;
+			}
+			
+		}
+		
+		return false; 
+	}
+	
 	
 
 
